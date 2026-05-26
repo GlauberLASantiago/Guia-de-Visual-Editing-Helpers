@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>21 Visual Editing Helpers — Guia com Exemplos</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --card2: #1e293b;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --soft: #94a3b8;
+      --blue: #38bdf8;
+      --purple: #a78bfa;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --red: #fb7185;
+      --border: rgba(255,255,255,.13);
+      --radius: 20px;
+      --shadow: 0 20px 50px rgba(0,0,0,.32);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,.18), transparent 36rem),
+        radial-gradient(circle at top right, rgba(167,139,250,.18), transparent 36rem),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      width: min(1200px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 30px 0 70px;
+    }
+
+    .hero, .note, .all-prompts {
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero { padding: 34px; margin-bottom: 18px; }
+
+    .badge {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #bae6fd;
+      background: rgba(56,189,248,.12);
+      border: 1px solid rgba(56,189,248,.25);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: .95;
+      letter-spacing: -.055em;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 3vw, 36px);
+      letter-spacing: -.035em;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -.025em;
+    }
+
+    p { margin: 0; color: var(--muted); }
+    .hero p { max-width: 900px; font-size: 18px; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      padding: 10px 13px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: .16s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+      font: inherit;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.11); }
+    .btn.primary { background: linear-gradient(135deg, var(--blue), var(--purple)); color: #06111f; border-color: transparent; font-weight: 950; }
+    .btn.small { padding: 8px 10px; border-radius: 12px; font-size: 13px; }
+
+    .note {
+      padding: 18px;
+      margin: 18px 0;
+      background: rgba(52,211,153,.08);
+    }
+
+    .note strong { color: #bbf7d0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .card {
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+      box-shadow: var(--shadow);
+    }
+
+    .head {
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.035);
+    }
+
+    .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      margin-bottom: 11px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #06111f;
+      font-weight: 950;
+    }
+
+    .terms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .term {
+      color: #bae6fd;
+      border: 1px solid rgba(56,189,248,.24);
+      background: rgba(56,189,248,.09);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      flex: 1;
+    }
+
+    .box {
+      padding: 13px;
+      border-radius: 15px;
+      border: 1px solid var(--border);
+      background: rgba(2,6,23,.42);
+    }
+
+    .box b {
+      display: block;
+      color: var(--soft);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 6px;
+    }
+
+    .example p { color: #e2e8f0; }
+
+    .prompt {
+      border-color: rgba(56,189,248,.25);
+      background: rgba(56,189,248,.075);
+    }
+
+    .prompt p { color: #e0f2fe; font-size: 14px; }
+
+    .copy-area { margin-top: auto; }
+
+    .demo {
+      position: relative;
+      height: 150px;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #020617;
+    }
+
+    .demo-grid {
+      background:
+        linear-gradient(rgba(255,255,255,.075) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.075) 1px, transparent 1px),
+        #020617;
+      background-size: 24px 24px;
+    }
+
+    .shape {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 86px;
+      height: 56px;
+      transform: translate(-50%, -50%);
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--yellow), #f97316);
+      display: grid;
+      place-items: center;
+      color: #1f2937;
+      font-weight: 950;
+      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+    }
+
+    .line-v, .line-h {
+      position: absolute;
+      background: var(--red);
+      box-shadow: 0 0 12px rgba(251,113,133,.35);
+    }
+    .line-v { width: 2px; top: 0; bottom: 0; left: 50%; }
+    .line-h { height: 2px; left: 0; right: 0; top: 50%; }
+
+    .dash-box {
+      position: absolute;
+      border: 2px dashed var(--blue);
+      border-radius: 14px;
+    }
+
+    .handle {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      background: var(--blue);
+      border: 2px solid #082f49;
+    }
+    .nw { left: -7px; top: -7px; } .ne { right: -7px; top: -7px; }
+    .sw { left: -7px; bottom: -7px; } .se { right: -7px; bottom: -7px; }
+
+    .hotspot {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(52,211,153,.18);
+      border: 2px solid var(--green);
+      color: #bbf7d0;
+      font-weight: 950;
+    }
+
+    .ghost {
+      position: absolute;
+      width: 92px;
+      height: 56px;
+      border-radius: 14px;
+      border: 2px solid var(--purple);
+      background: rgba(167,139,250,.16);
+      opacity: .75;
+    }
+
+    .field {
+      height: 22px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--border);
+      color: #dbeafe;
+      padding-left: 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .panel-mini {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 112px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,.9);
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .tree {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.7;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+    }
+
+    .layer {
+      position: absolute;
+      left: 44px;
+      width: 150px;
+      height: 35px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      color: #e2e8f0;
+    }
+
+    .device {
+      position: absolute;
+      bottom: 18px;
+      border: 2px solid var(--blue);
+      border-radius: 12px;
+      background: rgba(56,189,248,.08);
+      display: grid;
+      place-items: center;
+      color: #bae6fd;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .all-prompts {
+      margin-top: 24px;
+      padding: 22px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 440px;
+      resize: vertical;
+      margin-top: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #020617;
+      color: #dbeafe;
+      padding: 16px;
+      line-height: 1.55;
+      font: 14px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      outline: none;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+      z-index: 50;
+      color: var(--text);
+      background: rgba(2,6,23,.96);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 11px 15px;
+      box-shadow: var(--shadow);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .footer { text-align: center; color: var(--soft); margin-top: 34px; }
+
+    @media (max-width: 980px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 20px, 1200px); padding-top: 14px; }
+      .hero { padding: 22px; }
+      .grid { grid-template-columns: 1fr; }
+      .card { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <span class="badge">🛠️ 21 funcionalidades — 21 exemplos — 21 prompts prontos</span>
+      <h1>Guia de Visual Editing Helpers</h1>
+      <p>
+        Cada cartão abaixo é um exemplo diferente. Não tem gerador escondido: os 21 exemplos estão escritos diretamente na página,
+        cada um com um prompt pronto para você copiar e mandar para a IA.
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="#lista">Ver os 21 exemplos</a>
+        <a class="btn" href="#prompts">Ver todos os prompts</a>
+        <button class="btn" onclick="copyAllPrompts()">Copiar todos os prompts</button>
+      </div>
+    </section>
+
+    <section class="note">
+      <p><strong>Frase-base:</strong> “Para eu ajustar este app, eu quero que você crie...” Depois escolha um dos 21 helpers abaixo.</p>
+    </section>
+
+    <section id="lista" class="grid">
+
+      <article class="card">
+        <div class="head"><span class="num">1</span><h3>Overlay / Debug Overlay</h3><div class="terms"><span class="term">debug overlay</span><span class="term">camada por cima</span><span class="term">guia visual</span></div></div>
+        <div class="body">
+          <div class="demo demo-grid"><div class="shape">APP</div><div class="line-v"></div><div class="line-h"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Linhas temporárias aparecem por cima da tela para mostrar centro, margens e alinhamento.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um debug overlay com linhas, marcações e informações visuais temporárias para eu conferir a posição dos elementos. Esse overlay deve sumir no modo final/runtime.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um debug overlay com linhas, marcações e informações visuais temporárias para eu conferir a posição dos elementos. Esse overlay deve sumir no modo final/runtime.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">2</span><h3>Gizmos</h3><div class="terms"><span class="term">transform gizmo</span><span class="term">setas de movimento</span><span class="term">controle 3D</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape">OBJ</div><div style="position:absolute;left:50%;top:50%;width:80px;height:4px;background:var(--red);transform:translate(18px,-50%);"></div><div style="position:absolute;left:calc(50% + 92px);top:50%;border-left:12px solid var(--red);border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateY(-50%);"></div><div style="position:absolute;left:50%;top:50%;width:4px;height:70px;background:var(--green);transform:translate(-50%,-88px);"></div><div style="position:absolute;left:50%;top:calc(50% - 98px);border-bottom:12px solid var(--green);border-left:8px solid transparent;border-right:8px solid transparent;transform:translateX(-50%);"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Setas aparecem no objeto para puxar para cima, para baixo, para esquerda ou direita.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie gizmos de transformação para eu mover, girar e redimensionar os objetos da modelagem. Esses gizmos devem aparecer só no modo editor.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie gizmos de transformação para eu mover, girar e redimensionar os objetos da modelagem. Esses gizmos devem aparecer só no modo editor.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">3</span><h3>Handles</h3><div class="terms"><span class="term">resize handles</span><span class="term">pontos de controle</span><span class="term">alças</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="dash-box" style="left:50%;top:50%;width:126px;height:82px;transform:translate(-50%,-50%);"><span class="handle nw"></span><span class="handle ne"></span><span class="handle sw"></span><span class="handle se"></span></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Quadradinhos nos cantos servem para aumentar, diminuir ou esticar um elemento.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie handles nos cantos dos elementos para eu redimensionar e reposicionar a modelagem com facilidade. Esses handles devem desaparecer no modo final.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie handles nos cantos dos elementos para eu redimensionar e reposicionar a modelagem com facilidade. Esses handles devem desaparecer no modo final.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">4</span><h3>Bounding Box</h3><div class="terms"><span class="term">caixa delimitadora</span><span class="term">selection box</span><span class="term">limite do objeto</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape">PEÇA</div><div class="dash-box" style="left:50%;top:50%;width:120px;height:82px;transform:translate(-50%,-50%);"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Uma borda tracejada mostra o limite real de uma peça na tela.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie bounding boxes em volta dos elementos para eu enxergar seus limites, posição e tamanho. Essas caixas devem ficar visíveis apenas no modo editor.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie bounding boxes em volta dos elementos para eu enxergar seus limites, posição e tamanho. Essas caixas devem ficar visíveis apenas no modo editor.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">5</span><h3>Hitbox / Click Area</h3><div class="terms"><span class="term">hitbox</span><span class="term">área clicável</span><span class="term">área de toque</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape" style="width:54px;height:54px;border-radius:999px;">BTN</div><div class="dash-box" style="left:50%;top:50%;width:120px;height:100px;transform:translate(-50%,-50%);background:rgba(52,211,153,.12);border-color:var(--green);"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Um botão pequeno ganha uma área de clique maior para facilitar toque no celular.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie hitboxes editáveis para definir as áreas de clique ou toque dos elementos da modelagem. No modo editor elas devem aparecer; no modo final devem ficar invisíveis, mas funcionando.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie hitboxes editáveis para definir as áreas de clique ou toque dos elementos da modelagem. No modo editor elas devem aparecer; no modo final devem ficar invisíveis, mas funcionando.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">6</span><h3>Wireframe</h3><div class="terms"><span class="term">modo estrutura</span><span class="term">contorno simples</span><span class="term">esqueleto visual</span></div></div>
+        <div class="body">
+          <div class="demo"><div style="position:absolute;left:35px;top:35px;width:100px;height:70px;border:2px solid var(--blue);border-radius:12px;"></div><div style="position:absolute;right:35px;top:50px;width:110px;height:50px;border:2px dashed var(--purple);border-radius:12px;"></div><div style="position:absolute;left:90px;bottom:25px;width:160px;height:22px;border:2px solid var(--green);border-radius:999px;"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>O app fica só com contornos para você conferir estrutura e alinhamento.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um modo wireframe para mostrar apenas os contornos e a estrutura dos elementos. Esse modo deve me ajudar a ajustar a modelagem sem distração visual.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um modo wireframe para mostrar apenas os contornos e a estrutura dos elementos. Esse modo deve me ajudar a ajustar a modelagem sem distração visual.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">7</span><h3>Grid System</h3><div class="terms"><span class="term">grade</span><span class="term">grid helper</span><span class="term">grade de alinhamento</span></div></div>
+        <div class="body">
+          <div class="demo demo-grid"><div class="shape">GRID</div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Uma grade de quadradinhos aparece no fundo para posicionar objetos com precisão.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um grid system com uma grade visual de alinhamento para eu posicionar os elementos da modelagem com mais precisão. A grade deve sumir no modo final.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um grid system com uma grade visual de alinhamento para eu posicionar os elementos da modelagem com mais precisão. A grade deve sumir no modo final.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">8</span><h3>Snap System</h3><div class="terms"><span class="term">snap to grid</span><span class="term">encaixe automático</span><span class="term">guia magnética</span></div></div>
+        <div class="body">
+          <div class="demo demo-grid"><div class="shape" style="left:45%;">PEÇA</div><div style="position:absolute;right:66px;top:50%;font-size:34px;color:var(--red);transform:translateY(-50%);">🧲</div><div class="line-v" style="left:67%;background:var(--green);"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Ao arrastar uma peça, ela encaixa automaticamente na linha ou grade mais próxima.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um snap system para os elementos grudarem automaticamente na grade, nas bordas ou no centro de outros elementos durante o ajuste da modelagem.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um snap system para os elementos grudarem automaticamente na grade, nas bordas ou no centro de outros elementos durante o ajuste da modelagem.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">9</span><h3>Edit Mode / Design Mode</h3><div class="terms"><span class="term">modo editor</span><span class="term">modo design</span><span class="term">builder mode</span></div></div>
+        <div class="body">
+          <div class="demo"><div style="position:absolute;left:35px;top:45px;padding:10px 14px;border-radius:999px;background:var(--green);color:#052e1b;font-weight:900;">EDITOR ON</div><div class="dash-box" style="right:45px;top:42px;width:100px;height:70px;"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Um botão liga o modo editor e mostra caixas, guias, handles e controles.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um edit mode com botão de ligar e desligar. Quando estiver ligado, aparecem os ajudadores visuais; quando estiver desligado, o app fica limpo para uso final.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um edit mode com botão de ligar e desligar. Quando estiver ligado, aparecem os ajudadores visuais; quando estiver desligado, o app fica limpo para uso final.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">10</span><h3>Runtime vs Editor</h3><div class="terms"><span class="term">modo final</span><span class="term">runtime</span><span class="term">editor-only</span></div></div>
+        <div class="body">
+          <div class="demo"><div style="position:absolute;left:25px;top:25px;width:120px;height:100px;border:2px dashed var(--blue);border-radius:14px;display:grid;place-items:center;color:#bae6fd;">EDITOR</div><div style="position:absolute;right:25px;top:25px;width:120px;height:100px;border-radius:14px;background:linear-gradient(135deg,var(--yellow),#f97316);display:grid;place-items:center;color:#1f2937;font-weight:950;">FINAL</div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Na edição aparecem guias; no runtime aparece só o app limpo para o usuário.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você separe claramente modo editor e modo runtime. Tudo que for ajudador visual deve ser editor-only e deve desaparecer completamente no app final.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você separe claramente modo editor e modo runtime. Tudo que for ajudador visual deve ser editor-only e deve desaparecer completamente no app final.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">11</span><h3>Dev Helpers / Debug Helpers</h3><div class="terms"><span class="term">ajudadores de desenvolvimento</span><span class="term">debug helpers</span><span class="term">coordenadas</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape">OBJ</div><div style="position:absolute;left:calc(50% + 15px);top:calc(50% - 58px);background:rgba(2,6,23,.9);border:1px solid var(--border);border-radius:10px;padding:6px 8px;color:#dbeafe;font-size:12px;">id: peça_01<br>x:120 y:80</div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Uma etiqueta mostra nome, id, posição x/y e tamanho do objeto selecionado.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie dev helpers mostrando nome, id, coordenadas, tamanho e camada dos elementos da modelagem. Essas informações devem aparecer só enquanto eu estiver editando.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie dev helpers mostrando nome, id, coordenadas, tamanho e camada dos elementos da modelagem. Essas informações devem aparecer só enquanto eu estiver editando.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">12</span><h3>Layer System</h3><div class="terms"><span class="term">camadas</span><span class="term">helper layer</span><span class="term">interaction layer</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="layer" style="top:28px;background:rgba(251,191,36,.2);">visual layer</div><div class="layer" style="top:62px;left:65px;background:rgba(52,211,153,.18);">interaction layer</div><div class="layer" style="top:96px;left:86px;background:rgba(56,189,248,.18);">helper layer</div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Uma camada guarda a arte, outra os cliques e outra os ajudadores temporários.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um layer system separando camada visual, camada de interação e camada de ajudadores editor-only. Isso deve facilitar o ajuste da modelagem sem bagunçar o app final.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um layer system separando camada visual, camada de interação e camada de ajudadores editor-only. Isso deve facilitar o ajuste da modelagem sem bagunçar o app final.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">13</span><h3>Inspector Panel</h3><div class="terms"><span class="term">painel de propriedades</span><span class="term">object inspector</span><span class="term">property panel</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape" style="left:36%;">OBJ</div><div class="panel-mini"><b>Inspector</b><div class="field">x: 120</div><div class="field">y: 80</div><div class="field">w: 90</div></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Um painel lateral mostra campos para editar x, y, largura, altura e rotação.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um inspector panel para eu editar x, y, largura, altura, escala, rotação e z-index dos elementos da modelagem.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um inspector panel para eu editar x, y, largura, altura, escala, rotação e z-index dos elementos da modelagem.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">14</span><h3>Scene Graph</h3><div class="terms"><span class="term">hierarquia de objetos</span><span class="term">árvore de cena</span><span class="term">object hierarchy</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="tree">App<br>├─ Modelo<br>│  ├─ Peça 1<br>│  └─ Peça 2<br>└─ Botões</div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Uma árvore lista os objetos para você selecionar e organizar partes do app.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um scene graph simples mostrando a hierarquia dos objetos, grupos e peças da modelagem para eu selecionar e organizar cada elemento.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um scene graph simples mostrando a hierarquia dos objetos, grupos e peças da modelagem para eu selecionar e organizar cada elemento.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">15</span><h3>Anchor System</h3><div class="terms"><span class="term">âncoras</span><span class="term">responsive anchors</span><span class="term">pontos fixos</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape">PEÇA</div><div class="hotspot" style="left:calc(50% + 42px);top:calc(50% - 58px);">⚓</div><div style="position:absolute;left:calc(50% + 56px);top:calc(50% - 24px);width:2px;height:46px;background:var(--green);"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Uma etiqueta fica presa a um ponto do objeto mesmo quando a tela muda de tamanho.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um anchor system para prender elementos a pontos de referência da modelagem, mantendo tudo alinhado mesmo em telas diferentes.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um anchor system para prender elementos a pontos de referência da modelagem, mantendo tudo alinhado mesmo em telas diferentes.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">16</span><h3>SVG Interaction Mapping</h3><div class="terms"><span class="term">SVG interativo</span><span class="term">mapa de regiões</span><span class="term">áreas vetoriais</span></div></div>
+        <div class="body">
+          <div class="demo"><svg viewBox="0 0 260 120" width="100%" height="100%"><rect x="35" y="35" width="70" height="50" rx="12" fill="rgba(56,189,248,.25)" stroke="#38bdf8" stroke-width="3"/><circle cx="160" cy="60" r="34" fill="rgba(52,211,153,.24)" stroke="#34d399" stroke-width="3"/><polygon points="205,35 240,85 180,85" fill="rgba(167,139,250,.24)" stroke="#a78bfa" stroke-width="3"/></svg></div>
+          <div class="box example"><b>Exemplo simples</b><p>Cada parte de um desenho SVG vira uma região separada de clique.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um SVG interaction mapping para mapear regiões clicáveis dentro do SVG da modelagem. Cada região deve ter id, nome e área de interação editável.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um SVG interaction mapping para mapear regiões clicáveis dentro do SVG da modelagem. Cada região deve ter id, nome e área de interação editável.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">17</span><h3>Hotspots</h3><div class="terms"><span class="term">pontos interativos</span><span class="term">marcadores</span><span class="term">interactive points</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape">INFO</div><div class="hotspot" style="left:calc(50% + 58px);top:calc(50% - 58px);">+</div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Um círculo com + marca um ponto que abre uma explicação ou ação.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie hotspots arrastáveis para marcar pontos importantes da modelagem. Eles devem ser ajustáveis no modo editor e podem aparecer ou ficar invisíveis no modo final, conforme a função do app.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie hotspots arrastáveis para marcar pontos importantes da modelagem. Eles devem ser ajustáveis no modo editor e podem aparecer ou ficar invisíveis no modo final, conforme a função do app.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">18</span><h3>Proxy Objects</h3><div class="terms"><span class="term">objeto proxy</span><span class="term">controle substituto</span><span class="term">proxy de edição</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape" style="left:60%;opacity:.9;">REAL</div><div class="dash-box" style="left:25%;top:47px;width:90px;height:58px;background:rgba(56,189,248,.1);"><span style="position:absolute;left:12px;top:18px;color:#bae6fd;font-weight:900;font-size:12px;">PROXY</span></div><div style="position:absolute;left:42%;top:50%;width:54px;height:2px;background:var(--blue);"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Uma caixa simples controla uma peça complexa sem mexer diretamente no desenho final.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie proxy objects simples para controlar posição, tamanho e rotação de elementos complexos da modelagem sem eu precisar mexer diretamente no desenho final.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie proxy objects simples para controlar posição, tamanho e rotação de elementos complexos da modelagem sem eu precisar mexer diretamente no desenho final.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">19</span><h3>Ghost Elements</h3><div class="terms"><span class="term">elemento fantasma</span><span class="term">preview translúcido</span><span class="term">prévia</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="shape" style="left:38%;">ATUAL</div><div class="ghost" style="left:56%;top:47px;"></div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Uma cópia transparente mostra onde o objeto ficará depois de arrastar.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie ghost elements translúcidos para mostrar a posição futura dos elementos enquanto eu arrasto ou redimensiono a modelagem.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie ghost elements translúcidos para mostrar a posição futura dos elementos enquanto eu arrasto ou redimensiono a modelagem.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">20</span><h3>Scaffold UI</h3><div class="terms"><span class="term">interface andaime</span><span class="term">UI temporária</span><span class="term">estrutura de construção</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="panel-mini" style="left:14px;right:auto;width:120px;"><b>Ferramentas</b><div class="field">Mover</div><div class="field">Tamanho</div><div class="field">Salvar</div></div><div class="shape" style="left:64%;">APP</div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Um painel temporário com botões de ajuste aparece só enquanto você está construindo.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie uma scaffold UI, ou seja, uma interface temporária de construção com botões, painéis e controles para ajustar a modelagem. Essa interface deve sumir no modo final.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie uma scaffold UI, ou seja, uma interface temporária de construção com botões, painéis e controles para ajustar a modelagem. Essa interface deve sumir no modo final.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="head"><span class="num">21</span><h3>Responsive Preview</h3><div class="terms"><span class="term">prévia responsiva</span><span class="term">teste de telas</span><span class="term">device preview</span></div></div>
+        <div class="body">
+          <div class="demo"><div class="device" style="left:28px;width:48px;height:92px;">cel</div><div class="device" style="left:105px;width:72px;height:92px;">tablet</div><div class="device" style="right:28px;width:120px;height:92px;">desktop</div></div>
+          <div class="box example"><b>Exemplo simples</b><p>Botões mostram a mesma modelagem em tamanho de celular, tablet e computador.</p></div>
+          <div class="box prompt"><b>Prompt pronto</b><p>Para eu ajustar este app, eu quero que você crie um responsive preview para testar a modelagem em celular, tablet e desktop, verificando se os elementos continuam alinhados em cada tamanho de tela.</p></div>
+          <div class="copy-area"><button class="btn small primary" data-copy="Para eu ajustar este app, eu quero que você crie um responsive preview para testar a modelagem em celular, tablet e desktop, verificando se os elementos continuam alinhados em cada tamanho de tela.">Copiar prompt</button></div>
+        </div>
+      </article>
+
+    </section>
+
+    <section id="prompts" class="all-prompts">
+      <h2>Todos os prompts prontos</h2>
+      <p>Esta caixa contém os 21 prompts, um por funcionalidade.</p>
+      <div class="actions"><button class="btn primary" onclick="copyAllPrompts()">Copiar todos os prompts</button></div>
+      <textarea id="allPrompts" readonly></textarea>
+    </section>
+
+    <footer class="footer">Agora os 21 exemplos estão fixos no HTML, um por funcionalidade, sem depender de busca ou geração automática.</footer>
+  </main>
+
+  <div id="toast" class="toast">Copiado.</div>
+
+  <script>
+    const prompts = [
+      '1. Overlay / Debug Overlay\nPara eu ajustar este app, eu quero que você crie um debug overlay com linhas, marcações e informações visuais temporárias para eu conferir a posição dos elementos. Esse overlay deve sumir no modo final/runtime.',
+      '2. Gizmos\nPara eu ajustar este app, eu quero que você crie gizmos de transformação para eu mover, girar e redimensionar os objetos da modelagem. Esses gizmos devem aparecer só no modo editor.',
+      '3. Handles\nPara eu ajustar este app, eu quero que você crie handles nos cantos dos elementos para eu redimensionar e reposicionar a modelagem com facilidade. Esses handles devem desaparecer no modo final.',
+      '4. Bounding Box\nPara eu ajustar este app, eu quero que você crie bounding boxes em volta dos elementos para eu enxergar seus limites, posição e tamanho. Essas caixas devem ficar visíveis apenas no modo editor.',
+      '5. Hitbox / Click Area\nPara eu ajustar este app, eu quero que você crie hitboxes editáveis para definir as áreas de clique ou toque dos elementos da modelagem. No modo editor elas devem aparecer; no modo final devem ficar invisíveis, mas funcionando.',
+      '6. Wireframe\nPara eu ajustar este app, eu quero que você crie um modo wireframe para mostrar apenas os contornos e a estrutura dos elementos. Esse modo deve me ajudar a ajustar a modelagem sem distração visual.',
+      '7. Grid System\nPara eu ajustar este app, eu quero que você crie um grid system com uma grade visual de alinhamento para eu posicionar os elementos da modelagem com mais precisão. A grade deve sumir no modo final.',
+      '8. Snap System\nPara eu ajustar este app, eu quero que você crie um snap system para os elementos grudarem automaticamente na grade, nas bordas ou no centro de outros elementos durante o ajuste da modelagem.',
+      '9. Edit Mode / Design Mode\nPara eu ajustar este app, eu quero que você crie um edit mode com botão de ligar e desligar. Quando estiver ligado, aparecem os ajudadores visuais; quando estiver desligado, o app fica limpo para uso final.',
+      '10. Runtime vs Editor\nPara eu ajustar este app, eu quero que você separe claramente modo editor e modo runtime. Tudo que for ajudador visual deve ser editor-only e deve desaparecer completamente no app final.',
+      '11. Dev Helpers / Debug Helpers\nPara eu ajustar este app, eu quero que você crie dev helpers mostrando nome, id, coordenadas, tamanho e camada dos elementos da modelagem. Essas informações devem aparecer só enquanto eu estiver editando.',
+      '12. Layer System\nPara eu ajustar este app, eu quero que você crie um layer system separando camada visual, camada de interação e camada de ajudadores editor-only. Isso deve facilitar o ajuste da modelagem sem bagunçar o app final.',
+      '13. Inspector Panel\nPara eu ajustar este app, eu quero que você crie um inspector panel para eu editar x, y, largura, altura, escala, rotação e z-index dos elementos da modelagem.',
+      '14. Scene Graph\nPara eu ajustar este app, eu quero que você crie um scene graph simples mostrando a hierarquia dos objetos, grupos e peças da modelagem para eu selecionar e organizar cada elemento.',
+      '15. Anchor System\nPara eu ajustar este app, eu quero que você crie um anchor system para prender elementos a pontos de referência da modelagem, mantendo tudo alinhado mesmo em telas diferentes.',
+      '16. SVG Interaction Mapping\nPara eu ajustar este app, eu quero que você crie um SVG interaction mapping para mapear regiões clicáveis dentro do SVG da modelagem. Cada região deve ter id, nome e área de interação editável.',
+      '17. Hotspots\nPara eu ajustar este app, eu quero que você crie hotspots arrastáveis para marcar pontos importantes da modelagem. Eles devem ser ajustáveis no modo editor e podem aparecer ou ficar invisíveis no modo final, conforme a função do app.',
+      '18. Proxy Objects\nPara eu ajustar este app, eu quero que você crie proxy objects simples para controlar posição, tamanho e rotação de elementos complexos da modelagem sem eu precisar mexer diretamente no desenho final.',
+      '19. Ghost Elements\nPara eu ajustar este app, eu quero que você crie ghost elements translúcidos para mostrar a posição futura dos elementos enquanto eu arrasto ou redimensiono a modelagem.',
+      '20. Scaffold UI\nPara eu ajustar este app, eu quero que você crie uma scaffold UI, ou seja, uma interface temporária de construção com botões, painéis e controles para ajustar a modelagem. Essa interface deve sumir no modo final.',
+      '21. Responsive Preview\nPara eu ajustar este app, eu quero que você crie um responsive preview para testar a modelagem em celular, tablet e desktop, verificando se os elementos continuam alinhados em cada tamanho de tela.'
+    ];
+
+    const allText = prompts.join('\n\n');
+    document.getElementById('allPrompts').value = allText;
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message || 'Copiado.';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1400);
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => showToast('Copiado.')).catch(() => showToast('Não foi possível copiar.'));
+    }
+
+    function copyAllPrompts() {
+      copyText(allText);
+    }
+
+    document.querySelectorAll('[data-copy]').forEach(button => {
+      button.addEventListener('click', () => copyText(button.getAttribute('data-copy')));
+    });
+  </script>
+</body>
+</html>
